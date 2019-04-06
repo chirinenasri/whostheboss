@@ -1,7 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_image.h> /* Inclusion du header de SDL_image (adapter le dossier au besoin) */
+#include <ctype.h>
+#include <SDL/SDL_image.h> 
+#include <SDL/SDL_ttf.h>
+#include <string.h>
+#include <SDL/SDL_mixer.h>
+#include <time.h>
+#include "fichier.h"
  
 void pause();
  
@@ -9,7 +15,8 @@ int main(int argc, char *argv[])
 {int x=5;
     SDL_Surface *ecran = NULL, *imageDeFond = NULL, *play= NULL, *setting= NULL, *about= NULL,*quit=NULL;
     SDL_Rect positionFond, positionplay, positionsetting,positionabout,positionquit;
- 
+    
+
     positionFond.x = 0;
     positionFond.y = 0;
     positionplay.x = 500;
@@ -43,27 +50,22 @@ quit = IMG_Load("E.png");
     SDL_BlitSurface(quit, NULL, ecran, &positionquit);
  
     SDL_Flip(ecran);
-    pause();
- 
-    SDL_FreeSurface(imageDeFond);
-    SDL_FreeSurface(play);
-SDL_FreeSurface(setting);
-SDL_FreeSurface(about);
-SDL_FreeSurface(quit);
-    SDL_Quit();
- 
-    return EXIT_SUCCESS;
-}
- 
-void pause()
-{
+  
+
     int continuer = 1;
-    SDL_Event event;
-SDL_Surface *ab=NULL,*ecran=NULL;
+    SDL_Event event,event2;
+SDL_Surface *ab=NULL, *fenetre;
 SDL_Rect posab,posclic;
 posab.x=0;
 posab.y=0;
- 
+ background bg;
+ persoprincipal p;
+ entitesecondaire obj;
+ int sens;
+int done=1, collision=-1;
+init_background(&bg); //initialiser background
+init_persoP(&p); //initialiser personnage
+init_objet(&obj);
     while (continuer)
     {
         SDL_WaitEvent(&event);
@@ -78,14 +80,30 @@ posab.y=0;
                       posclic.y=event.button.y;}
                  //appuyer sur play
                if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>30)&&(event.button.y<170)){
-                SDL_Init(SDL_INIT_VIDEO);
+                SDL_Init(SDL_INIT_VIDEO);   
                 SDL_WM_SetIcon(IMG_Load("sdl_icone.bmp"), NULL);
- 
-                ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
-                SDL_WM_SetCaption("Chargement d'images en SDL", NULL);
-                ab=IMG_Load("3.jpg");
-                SDL_BlitSurface(ab, NULL, ecran, &posab);
-                SDL_Flip(ecran);}
+                ecran = SDL_SetVideoMode(1000, 650, 32, SDL_HWSURFACE);
+                afficher_background(&bg, ecran); //blitter l'image sur la surface
+                SDL_Flip(ecran); //mettre a jour la fenetre
+                afficher_personnageinit(&p, ecran); //afficher le personnage avant d'effectuer les deplacements
+                SDL_Flip(ecran); //mettre a jour la fenetre 
+                afficher_objet(&obj, ecran);
+                SDL_Flip(ecran); //mettre a jour la fenetre
+                
+                while (continuer !=0)
+                {
+                 sens=deplacement_clavier(&p, ecran); //sur quelle fleche le joueur a appuye
+                afficher_personnage(&p,ecran,sens);
+                SDL_Flip(ecran);
+                collision= boundingbox(&p, &obj);
+                 if (collision==0){ 
+                   continuer=0;
+                  }//fin if
+                 }//fin while
+
+                
+                }//fin if appuyer play
+    
 
                  //appuyer sur settings
                if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>180)&&(event.button.y<300)){
@@ -115,4 +133,15 @@ posab.y=0;
                 break;
         }
     }
+
+    SDL_FreeSurface(imageDeFond);
+    SDL_FreeSurface(play);
+SDL_FreeSurface(setting);
+SDL_FreeSurface(about);
+SDL_FreeSurface(quit);
+SDL_FreeSurface(p.pp);
+SDL_FreeSurface(bg.bg);
+    SDL_Quit();
+ 
+    return EXIT_SUCCESS;
 }
