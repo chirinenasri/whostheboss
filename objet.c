@@ -13,15 +13,15 @@
 {
       
 obj->positionobj1.x=300;
-obj->positionobj1.y=500;
-obj->positionobj2.x=700;
+obj->positionobj1.y=700;
+obj->positionobj2.x=300;
 obj->positionobj2.y=500;
+obj->objet[0]=IMG_Load("cartons.png");
+obj->objet[1]=IMG_Load("cartons.png");
 obj->positionobj1.w=obj->objet[0]->w;
 obj->positionobj1.h=obj->objet[0]->h;
 obj->positionobj2.w=obj->objet[1]->w;
 obj->positionobj2.h=obj->objet[1]->h;
-obj->objet[0]=IMG_Load("banc.jpg");
-obj->objet[1]=IMG_Load("cartons.png");
 }
 
 

@@ -14,17 +14,66 @@
       
 p->positionpp.x=10;
 p->positionpp.y=500;
-p->positionpp.w=p->pp->w;
-p->positionpp.h=p->pp->h;
 p->time=0;
 p->score=0;
 p->vie=4;
 p->pp=IMG_Load("personnage.png");
+p->positionpp.w=p->pp->w;
+p->positionpp.h=p->pp->h;
 
 }
 
 
+void afficher personnage()
+{
+int done=1;
+SDL_Event event;
+while(done)
+{
 
+if (SDL_PollEvent(&event))
+  { switch (event.type)
+    { case SDL_KEYDOWN : {
+if (event.key.keysym.sym==SDLK_ESCAPE)
+done=0;
+
+if(event.key.keysym.sym==SDLK_RIGHT)
+{positionpp.x+=50;
+afficher_personnageinit(&p, ecran)
+SDL_Flip(ecran);
+SDL_BlitSurface(image, NULL, screen, &positionecran);
+SDL_Flip(screen);}
+
+if(event.key.keysym.sym==SDLK_LEFT)
+{positionpp.x-=50;
+SDL_BlitSurface(pp, NULL, screen, &positionpp);
+SDL_Flip(screen);
+SDL_BlitSurface(image, NULL, screen, &positionecran);
+SDL_Flip(screen);}
+
+if(event.key.keysym.sym==SDLK_UP)
+{positionpp.y-=50;
+SDL_BlitSurface(pp, NULL, screen, &positionpp);
+SDL_Flip(screen);
+SDL_BlitSurface(image, NULL, screen, &positionecran);
+SDL_Flip(screen);}
+
+if(event.key.keysym.sym==SDLK_DOWN)
+{positionpp.y+=50;
+SDL_BlitSurface(pp, NULL, screen, &positionpp);
+SDL_Flip(screen);
+SDL_BlitSurface(image, NULL, screen, &positionecran);
+SDL_Flip(screen);}
+}}}
+SDL_BlitSurface(image,NULL, screen, &positionecran);
+//enlever l'arriere plan du detective
+SDL_SetColorKey(pp, SDL_SRCCOLORKEY, SDL_MapRGB(pp->format,255,255,255));
+SDL_BlitSurface(pp, NULL, screen, &positionpp);
+SDL_Flip(screen);
+}
+SDL_FreeSurface(image);
+SDL_FreeSurface(pp);
+}
 
 void afficher_personnageinit(persoprincipal *p, SDL_Surface *ecran)
 {

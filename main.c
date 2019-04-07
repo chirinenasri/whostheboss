@@ -50,7 +50,7 @@ quit = IMG_Load("E.png");
     SDL_BlitSurface(quit, NULL, ecran, &positionquit);
  
     SDL_Flip(ecran);
-  
+ 
 
     int continuer = 1;
     SDL_Event event,event2;
@@ -60,12 +60,14 @@ posab.x=0;
 posab.y=0;
  background bg;
  persoprincipal p;
- entitesecondaire obj;
- int sens;
-int done=1, collision=-1;
-init_background(&bg); //initialiser background
-init_persoP(&p); //initialiser personnage
+ entitesecondaire obj,vie;
+ int sens, test=0;
+int done=1, collision=-1,z;
+p.pp=NULL;
+//init_background(&bg); //initialiser background
+//init_persoP(&p); //initialiser personnage
 init_objet(&obj);
+//init_vie(&vie);
     while (continuer)
     {
         SDL_WaitEvent(&event);
@@ -82,12 +84,25 @@ init_objet(&obj);
                if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>30)&&(event.button.y<170)){
                 SDL_Init(SDL_INIT_VIDEO);   
                 SDL_WM_SetIcon(IMG_Load("sdl_icone.bmp"), NULL);
-                ecran = SDL_SetVideoMode(1000, 650, 32, SDL_HWSURFACE);
-                afficher_background(&bg, ecran); //blitter l'image sur la surface
+                    z=move();
+               afficher_objet(&obj,ecran);
+               SDL_Flip(ecran);
+              
+            
+
+
+
+
+                //ecran = SDL_SetVideoMode(1000, 650, 32, SDL_HWSURFACE);
+                
+                
+               /*afficher_background(&bg, ecran); //blitter l'image sur la surface
                 SDL_Flip(ecran); //mettre a jour la fenetre
                 afficher_personnageinit(&p, ecran); //afficher le personnage avant d'effectuer les deplacements
                 SDL_Flip(ecran); //mettre a jour la fenetre 
                 afficher_objet(&obj, ecran);
+                SDL_Flip(ecran); //mettre a jour la fenetre
+                afficher_vie(&vie, ecran, test);
                 SDL_Flip(ecran); //mettre a jour la fenetre
                 
                 while (continuer !=0)
@@ -96,10 +111,11 @@ init_objet(&obj);
                 afficher_personnage(&p,ecran,sens);
                 SDL_Flip(ecran);
                 collision= boundingbox(&p, &obj);
-                 if (collision==0){ 
-                   continuer=0;
+                if (collision==0){ 
+                   test++;
                   }//fin if
                  }//fin while
+                */
 
                 
                 }//fin if appuyer play
@@ -142,6 +158,6 @@ SDL_FreeSurface(quit);
 SDL_FreeSurface(p.pp);
 SDL_FreeSurface(bg.bg);
     SDL_Quit();
- 
+
     return EXIT_SUCCESS;
 }

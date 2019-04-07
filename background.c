@@ -36,8 +36,20 @@ void afficher_background(background *b, SDL_Surface *fenetre)
          SDL_BlitSurface(b->bg, NULL, fenetre, &b->positionbg);
 	
 }
+
+void scrolling_right(SDL_Surface *screen, background *b)
+{
+if (b->camera.x<1600 - b->camera.w)
+b->camera.x+=20;
+}
+
+void scrolling_left(SDL_Surface *screen, background *b)
+{
+if (b->camera.x>0)
+b->camera.x-=20;
+}
 	
-void scrollingbg(int sens, background *b , persoprincipal *p)
+/*void scrollingbg(int sens, background *b , persoprincipal *p)
 {
 	if(sens==1) //droite
 	{ 
@@ -79,9 +91,9 @@ else if(sens==4)//bas
 			b->scroll.y = 8000-600;
 		
 	}
-}
+}*/
 
-/*SDL_Rect scrolling(int d, SDL_Rect camera, persoprincipal pp)
+/*SDL_Rect scrolling(int d, SDL_Rect camera, persoprincipal *pp)
 {
 if(camera.x<=0) camera.x=0;
 
@@ -97,4 +109,68 @@ camera.x=camera.x-20;
 
 
 return camera ;
+}*/
+
+//****************************************************************
+
+/*void scroll(int direction, persoprincipal *j,background *map) 
+{
+
+  if (direction==1 && j->positionpp.y + j->positionpp.h/2  <= map->camera.h/2 - 10) 
+  {
+                              map->camera.y-=10;
+                           (j->positionpp).y+=10;
+  }
+  else if (direction==2 && j->positionpp.y + j->positionpp.h/2 +100 >= map->camera.h/2 + 10) 
+  {
+			map->camera.y+=10;
+                               (j->positionpp).y-=10;
+  }
+  else if (direction==4 && j->positionpp.x + j->positionpp.w/2  <= map->camera.w/2 - 10) 
+  {
+                   map->camera.x-=10;
+                    (j->positionpp).x+=10;
+  }
+  else if (direction==3 && j->positionpp.x + j->positionpp.w/2 +200 >= map->camera.w/2 + 10) 
+  {
+		   map->camera.x+=10;
+                    (j->positionpp).x-=10;
+  }
+
+
+  if( map->camera.x < 0 )
+    {
+        map->camera.x = 0;
+                           (j->positionpp).x-=10;
+    }
+    if( map->camera.y < 0 )
+    {
+        map->camera.y = 0;
+                           (j->positionpp).y-=10;
+    }
+
+
+  if( map->camera.x > map->bg->w - map->camera.w )
+    {
+        map->camera.x = map->bg->w - map->camera.w ;
+	             (j->positionpp).x+=10;
+    }
+    if( map->camera.y > map->bg->h - map->camera.h  )
+    {
+        map->camera.y = map->bg->h - map->camera.h ;
+                  (j->positionpp).y+=10;
+    }
+
+}
+
+
+  
+
+
+
+
+void display_scroll (SDL_Surface *ecran,background map)
+{
+SDL_BlitSurface(map.bg, &map.camera, ecran, NULL);
+
 }*/
