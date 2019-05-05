@@ -1,163 +1,323 @@
+#include "main.h"
+#include "instructions.h"
+#include "option.h"
+#include "quit.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL/SDL.h>
-#include <ctype.h>
 #include <SDL/SDL_image.h> 
-#include <SDL/SDL_ttf.h>
-#include <string.h>
 #include <SDL/SDL_mixer.h>
-#include <time.h>
 #include "fichier.h"
- 
-void pause();
- 
-int main(int argc, char *argv[])
-{int x=5;
-    SDL_Surface *ecran = NULL, *imageDeFond = NULL, *play= NULL, *setting= NULL, *about= NULL,*quit=NULL;
-    SDL_Rect positionFond, positionplay, positionsetting,positionabout,positionquit;
-    
 
-    positionFond.x = 0;
-    positionFond.y = 0;
-    positionplay.x = 500;
-    positionplay.y = 10;
-positionsetting.x=500;
-positionsetting.y=170;
-positionabout.x=500;
-positionabout.y=320;
-positionquit.x=530;
-positionquit.y=435;
-
- 
+int main ( int argc, char** argv )
+{
     SDL_Init(SDL_INIT_VIDEO);
- 
-    SDL_WM_SetIcon(IMG_Load("sdl_icone.bmp"), NULL);
- 
-    ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
-    SDL_WM_SetCaption("Chargement d'images en SDL", NULL);
- 
-    imageDeFond = IMG_Load("bg.png");
-    SDL_BlitSurface(imageDeFond, NULL, ecran, &positionFond);
- 
-   
-    play = IMG_Load("P.png");
-    SDL_BlitSurface(play, NULL, ecran, &positionplay);
-setting = IMG_Load("S.png");
-    SDL_BlitSurface(setting, NULL, ecran, &positionsetting);
-about = IMG_Load("A.png");
-    SDL_BlitSurface(about, NULL, ecran, &positionabout);
-quit = IMG_Load("E.png");
-    SDL_BlitSurface(quit, NULL, ecran, &positionquit);
- 
-    SDL_Flip(ecran);
- 
+    SDL_Surface *screen=NULL;
+    SDL_Surface *background=NULL;
+    buttons b;
+    screen=SDL_SetVideoMode (800,600,0,SDL_HWSURFACE|SDL_DOUBLEBUF);
+    SDL_WM_SetCaption("limitless",NULL);//titre de la fenetre
+    SDL_WarpMouse(screen->w / 2, screen->h / 2);
+    SDL_EnableKeyRepeat(100,100);
+    background =SDL_LoadBMP("bg.bmp");
+    SDL_Rect background_pos;
+    SDL_Rect pxy,pxin,pxset,pxexit;
+    SDL_Event event;
+    int z;
 
-    int continuer = 1;
-    SDL_Event event,event2;
-SDL_Surface *ab=NULL, *fenetre;
-SDL_Rect posab,posclic;
-posab.x=0;
-posab.y=0;
- background bg;
- persoprincipal p;
- entitesecondaire obj,vie;
- int sens, test=0;
-int done=1, collision=-1,z;
-p.pp=NULL;
-//init_background(&bg); //initialiser background
-//init_persoP(&p); //initialiser personnage
-init_objet(&obj);
-//init_vie(&vie);
-    while (continuer)
+if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)==-1)
+{printf("%s", Mix_GetError());}
+Mix_Music *music;
+music=Mix_LoadMUS("2.mp3");
+Mix_PlayMusic(music, -1);
+
+
+    background_pos.x=0;
+    background_pos.y=0;
+    pxy.x=500;
+    pxy.y=10;
+
+    pxin.x=500;
+    pxin.y=170;
+
+    pxset.x=500;
+    pxset.y=320;
+
+    pxexit.x=500;
+    pxexit.y=435;
+ //pxy.x=328;
+    //pxy.y=443;
+/*pxy.x=500;
+    pxy.y=10;
+
+ 
+    pxin.x=328;
+    pxin.y=481;
+
+    pxset.x=328;
+    pxset.y=519;
+ 
+    pxexit.x=328;
+    pxexit.y=557;*/
+    int pp=2,op=0,ex=0,ins=0,t;
+    int done=1;
+    int motion=330;
+    b.play[0]=SDL_LoadBMP("1.bmp");
+    b.play[1]=SDL_LoadBMP("play.bmp");
+    //b.play[2]=SDL_LoadBMP("play2.bmp");
+    b.instructions[0]=SDL_LoadBMP("3.bmp");
+    b.instructions[1]=SDL_LoadBMP("sans titre.bmp");
+   // b.instructions[2]=SDL_LoadBMP("instructions2.bmp");
+    b.setting[0]=SDL_LoadBMP("2.bmp");
+    b.setting[1]=SDL_LoadBMP("set.bmp");
+    b.setting[2]=SDL_LoadBMP("setting2.bmp");
+    b.exit[0]=SDL_LoadBMP("4.bmp");
+    b.exit[1]=SDL_LoadBMP("ex.bmp");
+    b.exit[2]=SDL_LoadBMP("exit2.bmp");
+
+while (done!=0)
     {
-        SDL_WaitEvent(&event);
-        switch(event.type)
+        SDL_BlitSurface(background,NULL,screen,NULL);
+        SDL_BlitSurface(b.play[pp],NULL,screen,&pxy);
+        SDL_BlitSurface(b.instructions[ins],NULL,screen,&pxin);
+        SDL_BlitSurface(b.setting[op],NULL,screen,&pxset);
+        SDL_BlitSurface(b.exit[ex],NULL,screen,&pxexit);
+        SDL_Flip(screen);
+        t=0;
+        if (SDL_WaitEvent(&event))
         {
-            case SDL_QUIT:
-                continuer = 0;
+            switch(event.type)
+            {
+            case SDL_QUIT :
+                if (quit(screen)==1)
+                    done=0;
                 break;
-            case SDL_MOUSEBUTTONUP:
-               if (event.button.button==SDL_BUTTON_LEFT){
-                      posclic.x=event.button.x;
-                      posclic.y=event.button.y;}
-                 //appuyer sur play
-               if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>30)&&(event.button.y<170)){
-                SDL_Init(SDL_INIT_VIDEO);   
-                SDL_WM_SetIcon(IMG_Load("sdl_icone.bmp"), NULL);
-                    z=move();
-               afficher_objet(&obj,ecran);
-               SDL_Flip(ecran);
-              
-            
+            case SDL_KEYDOWN:
 
-
-
-
-                //ecran = SDL_SetVideoMode(1000, 650, 32, SDL_HWSURFACE);
-                
-                
-               /*afficher_background(&bg, ecran); //blitter l'image sur la surface
-                SDL_Flip(ecran); //mettre a jour la fenetre
-                afficher_personnageinit(&p, ecran); //afficher le personnage avant d'effectuer les deplacements
-                SDL_Flip(ecran); //mettre a jour la fenetre 
-                afficher_objet(&obj, ecran);
-                SDL_Flip(ecran); //mettre a jour la fenetre
-                afficher_vie(&vie, ecran, test);
-                SDL_Flip(ecran); //mettre a jour la fenetre
-                
-                while (continuer !=0)
+                switch(event.key.keysym.sym)
                 {
-                 sens=deplacement_clavier(&p, ecran); //sur quelle fleche le joueur a appuye
-                afficher_personnage(&p,ecran,sens);
-                SDL_Flip(ecran);
-                collision= boundingbox(&p, &obj);
-                if (collision==0){ 
-                   test++;
-                  }//fin if
-                 }//fin while
-                */
+                case SDLK_ESCAPE:
+                   if (quit(screen)==1)
+                        done=0;
+                    break;
+                case SDLK_UP:
+                    if (pp==1 && t==0)
+                    {
+                        ex=1;
+                        pp=0;
+                        op=0;
+                        ins=0;
+                        t=1;
+                    }
+                    else if(ins==1 && t==0)
+                    {
+                        pp=1;
+                        op=0;
+                        ex=0;
+                        ins=0;
+                        t=1;
+                    }
+                    else if (op==1 && t==0)
+                    {
+                        ins=1;
+                        ex=0;
+                        pp=0;
+                        op=0;
+                        t=1;
+                    }
+                    else if (ex==1 && t==0)
+                    {
+                        op=1;
+                        ex=0;
+                        pp=0;
+                        ins=0;
+                        t=0;
+                    }
+                    break;
+                case SDLK_DOWN:
+                    if (pp==1 && t==0)
+                    {
+                        ins=1;
+                        ex=0;
+                        op=0;
+                        pp=0;
+                        t=1;
+                    }
+                    else if(ins==1 && t==0)
+                    {
+                        pp=0;
+                        op=1;
+                        ex=0;
+                        ins=0;
+                        t=1;
+                    }
+                    else if (op==1 && t==0)
+                    {
+                        ex=1;
+                        pp=0;
+                        ins=0;
+                        op=0;
+                        t=1;
+                    }
+                    else if (ex==1 && t==0)
+                    {
+                        pp=1;
+                        op=0;
+                        ins=0;
+                        ex=0;
+                        t=1;
+                    }
+                    break;
+                case SDLK_RETURN:
+                    if (pp==1)
+                    {
+                        SDL_BlitSurface(b.play[2],NULL,screen,&pxy);
+                        SDL_Flip(screen);
+                        //SDL_Delay(200);
+                        //return NEW_GAME;
+                    }
+                    else if (ins==1)
+                    {
+                         SDL_BlitSurface(b.instructions[2],NULL,screen,&pxin);
+                        SDL_Flip(screen);
+                      instructions(screen);
+                       ins=0;
 
-                
-                }//fin if appuyer play
-    
+                        //SDL_Delay(200);
 
-                 //appuyer sur settings
-               if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>180)&&(event.button.y<300)){
-                SDL_Init(SDL_INIT_VIDEO);
-                SDL_WM_SetIcon(IMG_Load("sdl_icone.bmp"), NULL);
- 
-                ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
-                SDL_WM_SetCaption("Chargement d'images en SDL", NULL);
-                ab=IMG_Load("1.jpg");
-                SDL_BlitSurface(ab, NULL, ecran, &posab);
-                SDL_Flip(ecran);}
-
-                 //appuyer sur about
-               if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>320)&&(event.button.y<400)){
-                SDL_Init(SDL_INIT_VIDEO);
-                SDL_WM_SetIcon(IMG_Load("sdl_icone.bmp"), NULL);
- 
-                ecran = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
-                SDL_WM_SetCaption("Chargement d'images en SDL", NULL);
-                ab=IMG_Load("2.jpg");
-                SDL_BlitSurface(ab, NULL, ecran, &posab);
-                SDL_Flip(ecran);}
-
-                //appuyer sur exit
-               if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>450)&&(event.button.y<600))
-                continuer =0;
+                        //return OPTION;
+                    }
+                    else if (op==1)
+                    {
+                        SDL_BlitSurface(b.setting[2],NULL,screen,&pxset);
+                        SDL_Flip(screen);
+                        SDL_Delay(200);
+                        option(screen);
+                    }
+                    else if (ex==1)
+                    {
+                        SDL_BlitSurface(b.exit[2],NULL,screen,&pxexit);
+                        SDL_Flip(screen);
+                    if (quit(screen)==1)
+                            done=0;
+                        //SDL_Delay(200);
+                    }
+                    break;
+                }
                 break;
+            case SDL_MOUSEMOTION:
+                ex=0;
+                pp=0;
+                op=0;
+                t=0;
+ //printf("%d,%d\n",event.motion.x,event.motion.y);
+               // if ((event.motion.x>motion)&&(event.motion.y>motion+117)&&(event.motion.x<motion+131)&&(event.motion.y<motion+145) && (t==0) && (pp==0))
+               if ((event.motion.x>500) && (event.motion.y>30) && (event.motion.x<700) && (event.motion.y<170)&& (t==0) && (pp==0))
+ {
+                    pp=1;
+                    ex=0;
+                    ins=0;
+                    op=0;
+                    t=1;
+                }
+                else if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>320)&&(event.button.y<400) &&(t==0)&& (ins==0))
+                {
+                    ex=0;
+                    pp=0;
+                    //ins=1;
+ins=0; 
+                    op=1;
+                    t=1;
+                }
+                else if ((event.motion.x>500) && (event.motion.y>180) && (event.motion.x<700) && (event.motion.y<300)&&(t==0)&& (op==0))
+                {
+                    ex=0;
+                    pp=0;
+                    ins=1;
+                    op=0;
+                    t=1;
+                }
+                else if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>450)&&(event.button.y<600)&&(t==0)&& (ex==0))
+                {
+                    ex=1;
+                    pp=0;
+                    ins=0;
+                    op=0;
+                    t=1;
+                }
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button==SDL_BUTTON_LEFT)
+                {
+                    //if ((event.motion.x>motion) && (event.motion.y>motion+117) && (event.motion.x<motion+131) && (event.motion.y<motion+145)&&(pp==1))
+                          if ((event.motion.x>500) && (event.motion.y>30) && (event.motion.x<700) && (event.motion.y<170)&&(pp==1))
+                    {
+                        pp=2;
+//if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)==-1)
+//{printf("%s", Mix_GetError());}
+Mix_Music *music;
+music=Mix_LoadMUS("g.mp3");
+Mix_PlayMusic(music, -1);
+z=move();
+
+
+                        //SDL_Delay (200);
+                        //play(screen);
+                        //return NEW_GAME;
+                    }
+                    else if ((event.button.x>500)&&(event.button.x<700)&&(event.button.y>320)&&(event.button.y<400)&&(ins==1))
+                    {Mix_Music *music;
+music=Mix_LoadMUS("g.mp3");
+Mix_PlayMusic(music, -1);
+
+
+                        SDL_BlitSurface(b.instructions[2],NULL,screen,&pxin);
+                        SDL_Flip(screen);
+                        instructions(screen);
+                       //ins=0;
+
+
+
+                        //SDL_Delay (200);
+                        //return OPTION;
+                    }//Mix_CloseAudio();
+                    else if ((event.motion.x>500) && (event.motion.y>180) && (event.motion.x<700) && (event.motion.y<300)&&(op==1))
+                    {
+                        op=2;
+                        option(screen);
+                        //SDL_Delay (200);
+                        //return OPTION;
+                    }
+                    else if (ex==1)
+                    {
+                        SDL_BlitSurface(b.exit[2],NULL,screen,&pxexit);
+                        SDL_Flip(screen);
+                        //SDL_Delay (200);
+                        if (quit(screen)==1)
+                            done=0;
+
+                    }
+                }
+                break;
+            }
         }
     }
-
-    SDL_FreeSurface(imageDeFond);
-    SDL_FreeSurface(play);
-SDL_FreeSurface(setting);
-SDL_FreeSurface(about);
-SDL_FreeSurface(quit);
-SDL_FreeSurface(p.pp);
-SDL_FreeSurface(bg.bg);
+    SDL_FreeSurface(background);
+    SDL_FreeSurface(b.play[2]);
+    SDL_FreeSurface(b.setting[2]);
+    SDL_FreeSurface(b.exit[2]);
+    SDL_FreeSurface(b.instructions[2]);
+Mix_CloseAudio();Mix_CloseAudio();
     SDL_Quit();
+    return 0 ;
+    }
+void cleanmenu(SDL_Surface *background)
+{
+    buttons b;
+    SDL_FreeSurface(background);
+    SDL_FreeSurface(b.play[2]);
+    SDL_FreeSurface(b.setting[2]);
+    SDL_FreeSurface(b.exit[2]);
+    SDL_FreeSurface(b.instructions[2]);
 
-    return EXIT_SUCCESS;
 }

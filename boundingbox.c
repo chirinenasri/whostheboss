@@ -28,3 +28,13 @@ else {collision =1;}
 
 return collision;
 }
+
+int boundingbox3 (SDL_Rect positionpp, entitesecondaire *obj)
+{int collision=0; 
+
+if ((positionpp.x + positionpp.w < obj->positionobj3.x) || (positionpp.x > obj->positionobj3.x + obj->positionobj3.w) || (positionpp.y + positionpp.h < obj->positionobj3.y ) || (positionpp.y > obj->positionobj3.y + obj->positionobj3.h))
+collision = 0;
+else {collision =1;}
+
+return collision;
+}

@@ -1,0 +1,23 @@
+#ifndef scroll_H
+#define scroll_H
+
+
+#include <SDL/SDL.h>
+#include "defs.h" 
+#include "jouer.h"
+
+void scrollright(Background *B1,perso *p1); 
+void scrollleft(Background *B1,perso *p1); 
+void scrollup(Background *B1,perso *p1); 
+void scrolldown(Background *B1,perso *p1); 
+
+
+void scrollright2(Background *B1,perso *p1); 
+void scrollleft2(Background *B1,perso *p1); 
+void scrollup2(Background *B1,perso *p1); 
+void scrolldown2(Background *B1,perso *p1); 
+
+
+#endif
+
+
