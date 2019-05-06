@@ -1,36 +1,20 @@
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <SDL/SDL.h>
-#include <ctype.h>
-#include <SDL/SDL_image.h> 
-#include <SDL/SDL_ttf.h>
-#include <string.h>
-#include <SDL/SDL_mixer.h>
-#include <time.h>
-#include "fichier.h"
+#include <SDL/SDL_image.h>
+#include "ennemi.h" 
 
+void init_ennemi( SDL_Rect positionennemi,SDL_Surface *ennemi,SDL_Surface *ecran)
 
- void init_objet(entitesecondaire *e)
 {
-      
-e->positionennemi.x=500;
-e->positionennemi.y=500;
 
-e->ennemi=IMG_Load("personnage.png");
+ennemi =IMG_Load("personnage.png");
+positionennemi.x=400;
+positionennemi.y=300;
 }
-
-
-
-
-void afficher_objet(entitesecondaire *e, SDL_Surface *ecran)
+void affiche_ennemi( SDL_Rect positionennemi,SDL_Surface *ennemi,SDL_Surface *ecran)
 {
-SDL_BlitSurface(e->ennemi, NULL, ecran, &e->positionennemi);
+SDL_BlitSurface (ennemi,NULL,ecran,&positionennemi);
 }
-
-
-
-
-  
 
 
