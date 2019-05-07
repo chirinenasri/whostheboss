@@ -1,74 +1,96 @@
 #include <stdio.h>
-#include "SDL/SDL.h"
+#include <stdlib.h>
+#include <math.h>
+#include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_mixer.h>
-#include<SDL/SDL_ttf.h>
-#include"partage.h"
-int main() {
+#include <SDL/SDL_ttf.h>
+#include "IA.h"
 
 
-SDL_Surface *screen=NULL,*player1,*player2,*background1,*background2;
-SDL_Rect posback1,posback2,posplayer1,posplayer2;
-SDL_Event event;
-  int game =1,directionSDL1,directionSDL2;
-  background1=IMG_Load("background1.png");
-  background2=IMG_Load("background2.png");
-  player1=IMG_Load("player1.png");
-  player2=IMG_Load("player2.png");
-  SDL_Init( SDL_INIT_EVERYTHING );
-  screen = SDL_SetVideoMode(600, 1100, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-initposition(&posback1,&posback2,&posplayer1,&posplayer2);
-//initimage(background1,background2 ,player1,player2);
-SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
+#define width 1360 
+#define height 760
 
-while (game)
+int main()
 {
-  //input from SDL
-  while(SDL_PollEvent(&event)){
-        switch (event.type)
-        {
-        // exit if the window is closed
-        case SDL_QUIT:
-            game = 0;
-            break;
-        case SDL_KEYDOWN:
-        {
+  SDL_Surface *screen=NULL ;
+  int running=1,collision,i,temp_prec,temp_actu,test ;
+  float D ;
+  SDL_TimerID timer ;
 
-            if (event.key.keysym.sym == SDLK_d)//perso 1
-              directionSDL1 = 1;
+  Objet perso,robot ;
 
-            if (event.key.keysym.sym == SDLK_q)//perso 1
-              directionSDL1 = 2;
-          if (event.key.keysym.sym == SDLK_m)//perso 2
-          directionSDL2 = 1;
-          if (event.key.keysym.sym == SDLK_l)//perso 2
-          directionSDL2 = 2;
-        }break;
-        break;
-        case SDL_KEYUP:
-          directionSDL1=0;
-          directionSDL2=0;
-        break;
+   SDL_Init(SDL_INIT_VIDEO);
 
-      }}
-movementplayer(&directionSDL1,&directionSDL2,&posplayer1,&posplayer2);
+    screen = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE|SDL_DOUBLEBUF);
+    
+    intialiser(&perso ,&robot) ;
+    setup (screen,&perso,&robot) ;
+    
+    SDL_EnableKeyRepeat(10, 10);
+
+    while(running){
+     deplacement_objet(&perso,&running) ;
+     calculer_centre_rayon (&perso,&robot) ;
+     D=calculer_distance (&perso,&robot) ;
+     collision=verif_collision (&perso,&robot,D ) ;
+     if(collision)
+     {
+       
+
+         temp_prec=SDL_GetTicks();
+
+         if(temp_prec-temp_actu>1000)
+         {
+           
+         do{
+
+           temp_actu=SDL_GetTicks() ;
+           
+           if(perso.pos.x>robot.pos.x)
+           robot.pos.x+=1 ;
+           if(perso.pos.x<robot.pos.x)
+           robot.pos.x-=1 ;
+            deplacement_objet(&perso,&running) ;
+            SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,255,255,255)) ;
+            SDL_BlitSurface(perso.img,NULL,screen,&(perso.pos)) ;
+            SDL_BlitSurface(robot.img,NULL,screen,&(robot.pos)) ;
+            SDL_Flip(screen);
+        
+         }while(robot.pos.x!=perso.pos.x && (temp_actu-temp_prec<2000)) ;
+          
+       deplacement_objet(&perso,&running) ;
+       SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,255,255,255)) ;
+       SDL_BlitSurface(perso.img,NULL,screen,&(perso.pos)) ;
+       SDL_BlitSurface(robot.img,NULL,screen,&(robot.pos)) ;
+       SDL_Flip(screen);
+         }
+       deplacement_objet(&perso,&running) ;
+       SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,255,255,255)) ;
+       SDL_BlitSurface(perso.img,NULL,screen,&(perso.pos)) ;
+       SDL_BlitSurface(robot.img,NULL,screen,&(robot.pos)) ;
+       SDL_Flip(screen);
+       
 
 
-SDL_BlitSurface(background1,NULL,screen,&posback1);
-SDL_BlitSurface(background2,NULL,screen,&posback2);
-SDL_BlitSurface(player1,NULL,screen,&posplayer1);
-SDL_BlitSurface(player2,NULL,screen,&posplayer2);
-SDL_Flip(screen);
+     }
+     else
+     {
+       deplacement_objet(&perso,&running) ;
+       SDL_FillRect(screen,NULL,SDL_MapRGB(screen->format,255,255,255)) ;
+       SDL_BlitSurface(perso.img,NULL,screen,&(perso.pos)) ;
+       SDL_BlitSurface(robot.img,NULL,screen,&(robot.pos)) ;
+       SDL_Flip(screen);
+     }
+     
+
+
+    }
+    
+
+
+
+
+    return EXIT_SUCCESS;
 }
 
 
-
-
-
-SDL_FreeSurface(background1);
-SDL_FreeSurface(background2);
-SDL_FreeSurface(player1);
-SDL_FreeSurface(player2);
-
-
-}
