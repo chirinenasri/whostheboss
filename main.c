@@ -16,7 +16,7 @@ SDL_Event event;
   player1=IMG_Load("player1.png");
   player2=IMG_Load("player2.png");
   SDL_Init( SDL_INIT_EVERYTHING );
-  screen = SDL_SetVideoMode(1200, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+  screen = SDL_SetVideoMode(600, 1100, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 initposition(&posback1,&posback2,&posplayer1,&posplayer2);
 //initimage(background1,background2 ,player1,player2);
 SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);

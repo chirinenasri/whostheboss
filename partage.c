@@ -8,11 +8,11 @@ void initposition(SDL_Rect *posback1,SDL_Rect *posback2,SDL_Rect *posplayer1,SDL
 { posback1->x=0;
   posback1->y=0;
   posback2->x=0;
-  posback2->y=300;
+  posback2->y=550;
 posplayer1->x=20;
-posplayer1->y=100;
+posplayer1->y=350;
 posplayer2->x=20;
-posplayer2->y=400;
+posplayer2->y=850;
 
 }
 
